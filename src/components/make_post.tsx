@@ -29,7 +29,8 @@ const MakePost: React.FC<{}> = () => {
           axios.post(`/makepost`, {
             title: values.title,
             username: values.username,
-            content: values.content
+            content: values.content,
+
           },{headers: {
               'Content-Type': 'application/json'}}
   
