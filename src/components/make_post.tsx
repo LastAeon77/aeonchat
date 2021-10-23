@@ -8,58 +8,67 @@ import {
   FieldProps,
 } from 'formik';
 import axios from "axios";
+import {post} from "../types"
 
-type MyFormValues = {
-  title: String,
-  username: String,
-  content: String
+type income_data = {
+  new_post: post |undefined,
+  set_post: React.Dispatch<React.SetStateAction<post|undefined>> 
 }
+
+
 // const LINK = 'https://worker.siris-mark.workers.dev'
 
-const MakePost: React.FC<{}> = () => {
-  const initialValues: MyFormValues = { title: '', username: '', content: '' }
+const MakePost = ({ new_post, set_post }:income_data) => {
+  const initialValues: post = { title: '', username: '', content: '' }
   return (
-  <div>
-    <h1>Make a Post!</h1>
-    <Formik
-      initialValues = {initialValues}
-      onSubmit={(values, { setSubmitting }) => {
-        setTimeout(() => {
-          console.log(values)
-          axios.post(`/makepost`, {
-            title: values.title,
-            username: values.username,
-            content: values.content,
+    <div>
+      <h1>Make a Post!</h1>
+      <Formik
+        initialValues={initialValues}
+        onSubmit={(values, { setSubmitting }) => {
+          // setTimeout(() => {
+            axios.post(`/makepost`, {
+              title: values.title,
+              username: values.username,
+              content: values.content,
 
-          },{headers: {
-              'Content-Type': 'application/json'}}
-  
-          )
-            .then(function (response) {
+            }, {
+              headers: {
+                'content-type': 'application/json'
+              }
+            }
+
+            ).then(function (response) {
+              if(values)
+              {
+                set_post(values)
+              }
+
               console.log(response);
-            })
-            .catch(function (error) {
+            }).catch(function (error) {
               console.log(error);
             });
 
-          // alert(JSON.stringify(values, null, 2));
-          setSubmitting(false);
-        }, 400);
-      }}
-    >
-      {({ isSubmitting }) => (
-        <Form>
-          <Field type="text" name="username" placeholder="Username" />
-          <Field type="text" name="title" placeholder="Title" />
-          <Field type="text" name="content" placeholder="Content" />
-          <button type="submit" disabled={isSubmitting}>
-            Submit
-          </button>
-        </Form>
-      )}
-    </Formik>
-  </div>
-)
-      };
+            setSubmitting(false);
+          // }, 400);
+          values.title = '';
+          values.username = '';
+          values.content = '';
+        }}
+      >
+        {({ isSubmitting }) => (
+          <Form>
+            <Field type="text" name="username" placeholder="Username" />
+            <Field type="text" name="title" placeholder="Title" />
+            <Field type="text" name="content" placeholder="Content" />
+            <button type="submit" disabled={isSubmitting}>
+              Submit
+            </button>
+          </Form>
+        )}
+      </Formik>
+    </div>
+  )
+};
 
 export default MakePost;
